@@ -348,6 +348,11 @@ bool Endpoint::accept_msg(int target_sysid, int target_compid, uint8_t src_sysid
     // This endpoint has the target of message (sysid, but compid is broadcast): accept
     if (has_sys_id(target_sysid))
         return true;
+    
+    // This endpoint is redundant and we have received a heartbeat from a higher priority endpoint in the last 2 seconds.
+    if ((sys_priority > 0 ) && (sys_priority > current_sys_priority)){
+       return false;
+    }       
 
     // Reject everything else
     return false;
