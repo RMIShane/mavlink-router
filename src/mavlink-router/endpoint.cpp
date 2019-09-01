@@ -312,6 +312,27 @@ bool Endpoint::has_sys_comp_id(unsigned sys_comp_id)
     return false;
 }
 
+//Update current_sys_priority
+
+//If message priority is equal to or higher than the current system priority level reset the system priority timer.
+//Update the current_sys_priority if this message has a higher priority than the current system priority level.
+
+if (sys_priority <= current_sys_priority){
+    current_sys_priority = sys_priority;
+    last_sys_priority_millis = millis;
+}
+
+//If message has a priority less than the current system priority and it has been longer than 2 seconds since we have
+//received a message at the current_sys_priority then reduce the current_sys_priority to the level of the incoming message and
+//reset last_sys_priority_millis.
+
+else if ((sys_priority > current_sys_priority) && (millis > last_sys_priority_millis + 2000)){
+    current_sys_priority = sys_priority;
+    last_sys_priority_millis = millis;
+}
+    
+    
+
 bool Endpoint::accept_msg(int target_sysid, int target_compid, uint8_t src_sysid,
                           uint8_t src_compid, uint32_t msg_id)
 {
